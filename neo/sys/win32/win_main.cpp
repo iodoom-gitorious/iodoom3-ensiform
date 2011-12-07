@@ -1007,8 +1007,12 @@ void Sys_Init( void ) {
 			win32.sys_arch.SetString( "Win2K (NT)" );
 		} else if( win32.osversion.dwMajorVersion == 5 && win32.osversion.dwMinorVersion == 1 ) {
 			win32.sys_arch.SetString( "WinXP (NT)" );
-		} else if ( win32.osversion.dwMajorVersion == 6 ) {
-			win32.sys_arch.SetString( "Vista" );
+		} else if ( win32.osversion.dwMajorVersion == 6 && win32.osversion.dwMinorVersion == 0 ) {
+			win32.sys_arch.SetString( "WinVista (NT)" );
+		} else if ( win32.osversion.dwMajorVersion == 6 && win32.osversion.dwMinorVersion == 1 ) {
+			win32.sys_arch.SetString( "Win7 (NT)" );
+		} else if ( win32.osversion.dwMajorVersion == 6 && win32.osversion.dwMinorVersion == 2 ) {
+			win32.sys_arch.SetString( "Win8 Preview (NT)" );
 		} else {
 			win32.sys_arch.SetString( "Unknown NT variant" );
 		}
