@@ -26,7 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#define USE_BUILD_NUMBER
+// Define this to use a build number like in regular doom3
+//#define USE_BUILD_NUMBER
 
 #ifdef USE_BUILD_NUMBER
 
