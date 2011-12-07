@@ -25,4 +25,11 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
+
+#define USE_BUILD_NUMBER
+
+#ifdef USE_BUILD_NUMBER
+
 const int BUILD_NUMBER = 1304;
+
+#endif

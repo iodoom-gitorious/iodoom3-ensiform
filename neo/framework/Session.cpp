@@ -1955,7 +1955,7 @@ bool idSessionLocal::SaveGame( const char *saveName, bool autosave ) {
 	// Game Name / Version / Map Name / Persistant Player Info
 
 	// game
-	const char *gamename = GAME_NAME;
+	const char *gamename = LEGACY_GAME_NAME;
 	fileOut->WriteString( gamename );
 
 	// version
@@ -2079,7 +2079,7 @@ bool idSessionLocal::LoadGame( const char *saveName ) {
 	savegameFile->ReadString( gamename );
 
 	// if this isn't a savegame for the correct game, abort loadgame
-	if ( gamename != GAME_NAME ) {
+	if ( gamename != LEGACY_GAME_NAME ) {
 		common->Warning( "Attempted to load an invalid savegame: %s", in.c_str() );
 
 		loadingSaveGame = false;

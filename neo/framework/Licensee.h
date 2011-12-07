@@ -34,9 +34,11 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-#define GAME_NAME						"DOOM 3"		// appears on window titles and errors
+#define GAME_NAME						"iodoom3"		// appears on window titles and errors
 
-#define ENGINE_VERSION					"DOOM 1.3.1"	// printed in console
+#define LEGACY_GAME_NAME			"DOOM 3"		// for demo and save game compatibility
+
+#define ENGINE_VERSION				GAME_NAME " 1.3.2"	// printed in console
 
 // paths
 #define	CD_BASEDIR						"Doom"
