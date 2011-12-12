@@ -1703,7 +1703,7 @@ void rvDebuggerWindow::Printf ( const char* fmt, ... )
 	char		msg[4096];
 
 	va_start (argptr,fmt);
-	vsprintf (msg,fmt,argptr);
+	idStr::vsnPrintf( msg, sizeof( msg ), fmt, argptr );
 	va_end (argptr);
 
 	SendMessage ( mWndOutput, EM_SETSEL, -1, -1 );

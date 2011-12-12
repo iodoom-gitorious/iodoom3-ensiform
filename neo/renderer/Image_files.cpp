@@ -57,7 +57,7 @@ extern "C" {
 		char		msg[2048];
 
 		va_start (argptr,fmt);
-		vsprintf (msg,fmt,argptr);
+		idStr::vsnPrintf( msg, sizeof( msg ), fmt, argptr );
 		va_end (argptr);
 
 		common->FatalError( "%s", msg );
@@ -68,7 +68,7 @@ extern "C" {
 		char		msg[2048];
 
 		va_start (argptr,fmt);
-		vsprintf (msg,fmt,argptr);
+		idStr::vsnPrintf( msg, sizeof( msg ), fmt, argptr );
 		va_end (argptr);
 
 		common->Printf( "%s", msg );

@@ -254,7 +254,7 @@ void Error(char *error, ...) {
 	int i = qglGetError();
 
 	va_start(argptr, error);
-	vsprintf(text, error, argptr);
+	idStr::vsnPrintf( text, sizeof( text ), error, argptr );
 	va_end(argptr);
 
 	sprintf
@@ -288,7 +288,7 @@ void Warning(char *error, ...) {
 	int i = qglGetError();
 
 	va_start(argptr, error);
-	vsprintf(text, error, argptr);
+	idStr::vsnPrintf( text, sizeof( text ), error, argptr );
 	va_end(argptr);
 
 	common->Printf(text);

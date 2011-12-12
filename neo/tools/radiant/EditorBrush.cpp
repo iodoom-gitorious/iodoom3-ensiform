@@ -1566,7 +1566,7 @@ void WINAPI QERApp_MapPrintf_FILE(char *text, ...) {
 	char	buf[32768];
 
 	va_start(argptr, text);
-	vsprintf(buf, text, argptr);
+	idStr::vsnPrintf( buf, sizeof( buf ), text, argptr );
 	va_end(argptr);
 
 	fprintf(g_File, buf);
@@ -1791,7 +1791,7 @@ void WINAPI QERApp_MapPrintf_MEMFILE(char *text, ...) {
 	char	buf[32768];
 
 	va_start(argptr, text);
-	vsprintf(buf, text, argptr);
+	idStr::vsnPrintf( buf, sizeof( buf ), text, argptr );
 	va_end(argptr);
 
 	MemFile_fprintf(g_pMemFile, buf);
