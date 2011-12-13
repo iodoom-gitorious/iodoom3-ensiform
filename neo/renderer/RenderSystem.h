@@ -76,6 +76,7 @@ typedef struct glconfig_s {
 	bool				twoSidedStencilAvailable;
 	bool				textureNonPowerOfTwoAvailable;
 	bool				depthBoundsTestAvailable;
+	bool				GLSLAvailable;
 
 	// ati r200 extensions
 	bool				atiFragmentShaderAvailable;
@@ -94,6 +95,7 @@ typedef struct glconfig_s {
 	bool				allowNV10Path;
 	bool				allowR200Path;
 	bool				allowARB2Path;
+	bool				allowGLSLPath;
 
 	bool				isInitialized;
 } glconfig_t;

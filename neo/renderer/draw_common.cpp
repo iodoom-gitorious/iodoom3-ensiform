@@ -151,7 +151,7 @@ void RB_PrepareStageTexturing( const shaderStage_t *pStage,  const drawSurf_t *s
 	}
 
 	if ( pStage->texture.texgen == TG_GLASSWARP ) {
-		if ( tr.backEndRenderer == BE_ARB2 /*|| tr.backEndRenderer == BE_NV30*/ ) {
+		if ( tr.backEndRenderer == BE_ARB2 ) {
 			qglBindProgramARB( GL_FRAGMENT_PROGRAM_ARB, FPROG_GLASSWARP );
 			qglEnable( GL_FRAGMENT_PROGRAM_ARB );
 
@@ -273,7 +273,7 @@ void RB_FinishStageTexturing( const shaderStage_t *pStage, const drawSurf_t *sur
 	}
 
 	if ( pStage->texture.texgen == TG_GLASSWARP ) {
-		if ( tr.backEndRenderer == BE_ARB2 /*|| tr.backEndRenderer == BE_NV30*/ ) {
+		if ( tr.backEndRenderer == BE_ARB2 ) {
 			GL_SelectTexture( 2 );
 			globalImages->BindNull();
 
@@ -1060,7 +1060,12 @@ static void RB_T_Shadow( const drawSurf_t *surf ) {
 
 		R_GlobalPointToLocal( surf->space->modelMatrix, backEnd.vLight->globalLightOrigin, localLight.ToVec3() );
 		localLight.w = 0.0f;
+
+		if ( tr.backEndRenderer == BE_ARB2 ) {
 		qglProgramEnvParameter4fvARB( GL_VERTEX_PROGRAM_ARB, PP_LIGHT_ORIGIN, localLight.ToFloatPtr() );
+		} else if ( tr.backEndRenderer == BE_GLSL ) {
+			qglUniform4fvARB( stencilShadowShader.localLightOrigin, 1, localLight.ToFloatPtr() );
+		}
 	}
 
 	tri = surf->geo;
@@ -1691,6 +1696,9 @@ void	RB_STD_DrawView( void ) {
 		break;
 	case BE_ARB2:
 		RB_ARB2_DrawInteractions();
+		break;
+	case BE_GLSL:
+		RB_GLSL_DrawInteractions();
 		break;
 	case BE_NV20:
 		RB_NV20_DrawInteractions();
