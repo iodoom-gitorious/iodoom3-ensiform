@@ -1,11 +1,10 @@
 #version 120         
 
-varying vec3          	var_Vertex;        
+varying vec3          	var_Position;        
 varying vec2            	var_TexDiffuse;        
 varying vec2            	var_TexNormal;      
-varying vec4            	var_TexLightProj;      
-varying vec2            	var_TexLightFalloff; 
-varying mat3     			var_TangentToWorldMatrix;      
+varying vec4            	var_TexLight;      
+varying mat3     			var_TangentBinormalNormalMatrix;      
 varying vec4            	var_Color;        
      
 uniform sampler2D   	u_normalTexture;         
@@ -17,16 +16,17 @@ uniform vec4 				u_lightOrigin;
 uniform vec4 				u_diffuseColor;    
       
 void main( void ) {         
-	// compute light direction
-	vec3 L = normalize( u_lightOrigin.xyz - var_Vertex ); 
+	// compute normalized light direction
+	vec3 L = normalize( u_lightOrigin.xyz - var_Position ); 
 
-	// compute normal in tangent space from normalmap        
-	vec3 N = normalize( 2.0 * ( texture2D( u_normalTexture, var_TexNormal.st ).xyz - 0.5 ) );      
- 
-	// transform normal and light direction into world space 
-	N = var_TangentToWorldMatrix * N; 
-	L = normalize( var_TangentToWorldMatrix * L );
+	// rotate L into tangent space   
+	L = var_TangentBinormalNormalMatrix * L;
 	
+	// compute normal from normal map, move from [0,1] to  [-1, 1] range, normalize 
+	// NOTE: this is agb due to the RXGB compression technique used 
+	vec3 N = normalize( 2.0 * texture2D ( u_normalTexture, var_TexNormal.st ).agb - 1.0 ); 
+	N = var_TangentBinormalNormalMatrix * N;  
+
 	// compute N dot L
 	float NdotL = clamp( dot( N, L ), 0.0, 1.0 ); 
  
@@ -36,13 +36,13 @@ void main( void ) {
 	diffuse *= NdotL;
     
 	// compute light projection and falloff 
-	vec3 lightFalloff = texture2D( u_lightFalloffTexture, var_TexLightFalloff ).rgb;     
-	vec3 lightProjection = texture2DProj( u_lightProjectionTexture, var_TexLightProj.xyw ).rgb; 
-	vec3 lightAttenuation = lightProjection * lightFalloff; 
+	vec3 lightFalloff = texture2D( u_lightFalloffTexture, vec2( var_TexLight.z, 0.5 ) ).rgb;       
+	vec3 lightProjection = texture2DProj( u_lightProjectionTexture, var_TexLight.xyw ).rgb; 
 
 	// compute lighting model     
     vec4 color = diffuse;
-	color.rgb *= lightAttenuation; 
+	color.rgb *= lightProjection; 
+	color.rgb *= lightFalloff; 
 	color.rgb *= var_Color.rgb;
  
 	// output final color     
