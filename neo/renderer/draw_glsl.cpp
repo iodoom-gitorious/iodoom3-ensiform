@@ -368,6 +368,8 @@ void R_LoadGLSLShader( const char *name, shaderProgram_t *shaderProgram, GLenum 
 			common->Printf( "R_LoadGLSLShader: no type\n" );
 			return;
 	}
+
+	common->Printf( "\n" );
 }
 
 /*

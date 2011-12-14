@@ -1062,7 +1062,7 @@ static void RB_T_Shadow( const drawSurf_t *surf ) {
 		localLight.w = 0.0f;
 
 		if ( tr.backEndRenderer == BE_ARB2 ) {
-		qglProgramEnvParameter4fvARB( GL_VERTEX_PROGRAM_ARB, PP_LIGHT_ORIGIN, localLight.ToFloatPtr() );
+			qglProgramEnvParameter4fvARB( GL_VERTEX_PROGRAM_ARB, PP_LIGHT_ORIGIN, localLight.ToFloatPtr() );
 		} else if ( tr.backEndRenderer == BE_GLSL ) {
 			qglUniform4fvARB( stencilShadowShader.localLightOrigin, 1, localLight.ToFloatPtr() );
 		}
