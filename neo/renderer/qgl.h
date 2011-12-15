@@ -64,13 +64,7 @@ If you have questions concerning this license or the applicable additional terms
 #define WINAPI
 #endif
 
-// only use local glext.h if we are not using the system one already
-// http://oss.sgi.com/projects/ogl-sample/ABI/
-#ifndef GL_GLEXT_VERSION
-
 #include "glext.h"
-
-#endif
 
 typedef void (*GLExtension_t)(void);
 
@@ -138,13 +132,8 @@ extern	PFNGLALPHAFRAGMENTOP2ATIPROC	qglAlphaFragmentOp2ATI;
 extern	PFNGLALPHAFRAGMENTOP3ATIPROC	qglAlphaFragmentOp3ATI;
 extern	PFNGLSETFRAGMENTSHADERCONSTANTATIPROC	qglSetFragmentShaderConstantATI;
 
-// EXT_stencil_two_side
-extern	PFNGLACTIVESTENCILFACEEXTPROC	qglActiveStencilFaceEXT;
-
-
-// ATI_separate_stencil
-extern	PFNGLSTENCILOPSEPARATEATIPROC		qglStencilOpSeparateATI;
-extern	PFNGLSTENCILFUNCSEPARATEATIPROC		qglStencilFuncSeparateATI;
+// separate stencil
+extern PFNGLSTENCILOPSEPARATEPROC			qglStencilOpSeparate;
 
 // ARB_texture_compression
 extern	PFNGLCOMPRESSEDTEXIMAGE2DARBPROC	qglCompressedTexImage2DARB;
