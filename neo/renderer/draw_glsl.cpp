@@ -67,6 +67,10 @@ static void RB_GLSL_DrawInteraction( const drawInteraction_t *din ) {
 		qglUniform4fvARB( ambientInteractionShader.lightProjectionT, 1, din->lightProjection[1].ToFloatPtr() );
 		qglUniform4fvARB( ambientInteractionShader.lightProjectionQ, 1, din->lightProjection[2].ToFloatPtr() );
 		qglUniform4fvARB( ambientInteractionShader.lightFalloff, 1, din->lightProjection[3].ToFloatPtr() );
+		qglUniform4fvARB( ambientInteractionShader.bumpMatrixS, 1, din->bumpMatrix[0].ToFloatPtr() );
+		qglUniform4fvARB( ambientInteractionShader.bumpMatrixT, 1, din->bumpMatrix[1].ToFloatPtr() );
+		qglUniform4fvARB( ambientInteractionShader.diffuseMatrixS, 1, din->diffuseMatrix[0].ToFloatPtr() );
+		qglUniform4fvARB( ambientInteractionShader.diffuseMatrixT, 1, din->diffuseMatrix[1].ToFloatPtr() );
 
 		static const float zero[4] = { 0, 0, 0, 0 };
 		static const float one[4] = { 1, 1, 1, 1 };
@@ -96,6 +100,12 @@ static void RB_GLSL_DrawInteraction( const drawInteraction_t *din ) {
 		qglUniform4fvARB( interactionShader.lightProjectionT, 1, din->lightProjection[1].ToFloatPtr() );
 		qglUniform4fvARB( interactionShader.lightProjectionQ, 1, din->lightProjection[2].ToFloatPtr() );
 		qglUniform4fvARB( interactionShader.lightFalloff, 1, din->lightProjection[3].ToFloatPtr() );
+		qglUniform4fvARB( interactionShader.bumpMatrixS, 1, din->bumpMatrix[0].ToFloatPtr() );
+		qglUniform4fvARB( interactionShader.bumpMatrixT, 1, din->bumpMatrix[1].ToFloatPtr() );
+		qglUniform4fvARB( interactionShader.diffuseMatrixS, 1, din->diffuseMatrix[0].ToFloatPtr() );
+		qglUniform4fvARB( interactionShader.diffuseMatrixT, 1, din->diffuseMatrix[1].ToFloatPtr() );
+		qglUniform4fvARB( interactionShader.specularMatrixS, 1, din->specularMatrix[0].ToFloatPtr() );
+		qglUniform4fvARB( interactionShader.specularMatrixT, 1, din->specularMatrix[1].ToFloatPtr() );
 	
 		static const float zero[4] = { 0, 0, 0, 0 };
 		static const float one[4] = { 1, 1, 1, 1 };
@@ -234,7 +244,6 @@ RB_GLSL_DrawInteractions
 */
 void RB_GLSL_DrawInteractions( void ) {
 	viewLight_t		*vLight;
-	const idMaterial	*lightShader;
 
 	GL_SelectTexture( 0 );
 	qglDisableClientState( GL_TEXTURE_COORD_ARRAY );
@@ -253,12 +262,10 @@ void RB_GLSL_DrawInteractions( void ) {
 			continue;
 		}
 
-		if ( !vLight->localInteractions && !vLight->globalInteractions
-			&& !vLight->translucentInteractions ) {
+		// if there are no interactions, get out!
+		if ( !vLight->localInteractions && !vLight->globalInteractions && !vLight->translucentInteractions ) {
 			continue;
 		}
-
-		lightShader = vLight->lightShader;
 
 		// clear the stencil buffer if needed
 		if ( vLight->globalShadows || vLight->localShadows ) {
@@ -305,7 +312,6 @@ void RB_GLSL_DrawInteractions( void ) {
 
 		backEnd.depthFunc = GLS_DEPTHFUNC_LESS;
 		RB_GLSL_CreateDrawInteractions( vLight->translucentInteractions );
-
 		backEnd.depthFunc = GLS_DEPTHFUNC_EQUAL;
 	}
 
@@ -326,7 +332,6 @@ loads GLSL vertex or fragment shaders
 =================
 */
 void R_LoadGLSLShader( const char *name, shaderProgram_t *shaderProgram, GLenum type ) {
-	int		err;
 	idStr	fullPath = "gl2progs/";
 	fullPath += name;
 	char	*fileBuffer;
@@ -388,10 +393,10 @@ bool R_LinkGLSLShader( shaderProgram_t *shaderProgram, bool needsAttributes ) {
 	qglAttachObjectARB( shaderProgram->program, shaderProgram->fragmentShader );
 
 	if( needsAttributes ) {
-		qglBindAttribLocationARB( shaderProgram->program, 11, "attr_Normal" );
-		qglBindAttribLocationARB( shaderProgram->program, 10, "attr_Binormal" );
 		qglBindAttribLocationARB( shaderProgram->program, 8, "attr_TexCoord" );
 		qglBindAttribLocationARB( shaderProgram->program, 9, "attr_Tangent" );
+		qglBindAttribLocationARB( shaderProgram->program, 10, "attr_Bitangent" );
+		qglBindAttribLocationARB( shaderProgram->program, 11, "attr_Normal" );
 	}
 
 	qglLinkProgramARB( shaderProgram->program );
@@ -449,6 +454,13 @@ static bool RB_GLSL_InitShaders( ) {
 		interactionShader.lightProjectionQ = qglGetUniformLocationARB( interactionShader.program, "u_lightProjectionQ" );
 		interactionShader.lightFalloff = qglGetUniformLocationARB( interactionShader.program, "u_lightFalloff" );
 
+		interactionShader.bumpMatrixS = qglGetUniformLocationARB( interactionShader.program, "u_bumpMatrixS" );
+		interactionShader.bumpMatrixT = qglGetUniformLocationARB( interactionShader.program, "u_bumpMatrixT" );
+		interactionShader.diffuseMatrixS = qglGetUniformLocationARB( interactionShader.program, "u_diffuseMatrixS" );
+		interactionShader.diffuseMatrixT = qglGetUniformLocationARB( interactionShader.program, "u_diffuseMatrixT" );
+		interactionShader.specularMatrixS = qglGetUniformLocationARB( interactionShader.program, "u_specularMatrixS" );
+		interactionShader.specularMatrixT = qglGetUniformLocationARB( interactionShader.program, "u_specularMatrixT" );
+
 		interactionShader.colorModulate = qglGetUniformLocationARB( interactionShader.program, "u_colorModulate" );
 		interactionShader.colorAdd = qglGetUniformLocationARB( interactionShader.program, "u_colorAdd" );
 
@@ -484,6 +496,11 @@ static bool RB_GLSL_InitShaders( ) {
 		ambientInteractionShader.lightProjectionT = qglGetUniformLocationARB( ambientInteractionShader.program, "u_lightProjectionT" );
 		ambientInteractionShader.lightProjectionQ = qglGetUniformLocationARB( ambientInteractionShader.program, "u_lightProjectionQ" );
 		ambientInteractionShader.lightFalloff = qglGetUniformLocationARB( ambientInteractionShader.program, "u_lightFalloff" );
+
+		ambientInteractionShader.bumpMatrixS = qglGetUniformLocationARB( ambientInteractionShader.program, "u_bumpMatrixS" );
+		ambientInteractionShader.bumpMatrixT = qglGetUniformLocationARB( ambientInteractionShader.program, "u_bumpMatrixT" );
+		ambientInteractionShader.diffuseMatrixS = qglGetUniformLocationARB( ambientInteractionShader.program, "u_diffuseMatrixS" );
+		ambientInteractionShader.diffuseMatrixT = qglGetUniformLocationARB( ambientInteractionShader.program, "u_diffuseMatrixT" );
 
 		ambientInteractionShader.colorModulate = qglGetUniformLocationARB( ambientInteractionShader.program, "u_colorModulate" );
 		ambientInteractionShader.colorAdd = qglGetUniformLocationARB( ambientInteractionShader.program, "u_colorAdd" );

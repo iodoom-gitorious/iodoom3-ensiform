@@ -1,16 +1,16 @@
 #version 120         
 
-varying vec3          	var_Position;        
+varying vec3          		var_Position;        
 varying vec2            	var_TexDiffuse;        
 varying vec2            	var_TexNormal;      
 varying vec4            	var_TexLight;      
 varying mat3     			var_TangentBinormalNormalMatrix;      
 varying vec4            	var_Color;        
      
-uniform sampler2D   	u_normalTexture;         
-uniform sampler2D   	u_lightFalloffTexture;         
-uniform sampler2D   	u_lightProjectionTexture;         
-uniform sampler2D   	u_diffuseTexture;   
+uniform sampler2D   		u_normalTexture;         
+uniform sampler2D   		u_lightFalloffTexture;         
+uniform sampler2D   		u_lightProjectionTexture;         
+uniform sampler2D   		u_diffuseTexture;   
          
 uniform vec4 				u_lightOrigin;   
 uniform vec4 				u_diffuseColor;    
@@ -18,13 +18,10 @@ uniform vec4 				u_diffuseColor;
 void main( void ) {         
 	// compute normalized light direction
 	vec3 L = normalize( u_lightOrigin.xyz - var_Position ); 
-
-	// rotate L into tangent space   
-	L = var_TangentBinormalNormalMatrix * L;
 	
 	// compute normal from normal map, move from [0,1] to  [-1, 1] range, normalize 
 	// NOTE: this is agb due to the RXGB compression technique used 
-	vec3 N = normalize( 2.0 * texture2D ( u_normalTexture, var_TexNormal.st ).agb - 1.0 ); 
+	vec3 N = normalize( ( 2.0 * texture2D ( u_normalTexture, var_TexNormal.st ).agb ) - 0.5 ); 
 	N = var_TangentBinormalNormalMatrix * N;  
 
 	// compute N dot L
