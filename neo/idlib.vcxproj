@@ -156,6 +156,7 @@
     <ClCompile Include="idlib\bv\Frustum.cpp" />
     <ClCompile Include="idlib\bv\Sphere.cpp" />
     <ClCompile Include="idlib\containers\HashIndex.cpp" />
+    <ClCompile Include="idlib\Format.cpp" />
     <ClCompile Include="idlib\geometry\DrawVert.cpp" />
     <ClCompile Include="idlib\geometry\JointTransform.cpp" />
     <ClCompile Include="idlib\geometry\Surface.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="idlib\containers\StrList.h" />
     <ClInclude Include="idlib\containers\StrPool.h" />
     <ClInclude Include="idlib\containers\VectorSet.h" />
+    <ClInclude Include="idlib\Format.h" />
     <ClInclude Include="idlib\geometry\DrawVert.h" />
     <ClInclude Include="idlib\geometry\JointTransform.h" />
     <ClInclude Include="idlib\geometry\Surface.h" />

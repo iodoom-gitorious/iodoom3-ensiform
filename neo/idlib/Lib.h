@@ -208,6 +208,7 @@ template<class T> ID_INLINE T	Min( T x, T y ) { return ( x < y ) ? x : y; }
 
 // text manipulation
 #include "Str.h"
+#include "Format.h"
 #include "Token.h"
 #include "Lexer.h"
 #include "Parser.h"
