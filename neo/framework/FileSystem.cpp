@@ -232,6 +232,8 @@ static pureExclusion_t pureExclusions[] = {
 	{ 0,	0,  "fonts",										".dat",		excludePathPrefixAndExtension },
 	{ 0,	0,	"guis/temp.guied",								NULL,		excludeFullName },
 #endif
+	{ 0,	0,	"gl2progs",										".fs",		excludePathPrefixAndExtension },
+	{ 0,	0,	"gl2progs",										".vs",		excludePathPrefixAndExtension },
 	{ 0,	0,	NULL,											NULL,		NULL }
 };
 
