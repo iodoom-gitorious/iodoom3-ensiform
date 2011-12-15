@@ -189,10 +189,23 @@ void RadiantRun( void ) {
 
 HINSTANCE g_hOpenGL32 = NULL;
 HINSTANCE g_hOpenGL = NULL;
+HINSTANCE g_hDWM = NULL;
 bool g_bBuildList = false;
+
+typedef void (WINAPI *PFNDWMENABLECOMPOSITIONPROC) (bool bEnable);
 
 BOOL CRadiantApp::InitInstance()
 {
+	g_hDWM = ::LoadLibrary("dwmapi.dll");
+	if (g_hDWM != NULL)
+	{
+		PFNDWMENABLECOMPOSITIONPROC dwmEnableComposition = (PFNDWMENABLECOMPOSITIONPROC)::GetProcAddress(g_hDWM, "DwmEnableComposition");
+		if (dwmEnableComposition)
+		{
+			dwmEnableComposition(FALSE);
+		}
+		::FreeLibrary(g_hDWM);
+	}
   //g_hOpenGL32 = ::LoadLibrary("opengl32.dll");
 	// AfxEnableControlContainer();
 
