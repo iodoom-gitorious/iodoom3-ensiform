@@ -1,6 +1,6 @@
 #version 120      
  
-varying vec3          	var_Position;  
+varying vec3          		var_Position;  
 varying vec2            	var_TexDiffuse;  
 varying vec2            	var_TexNormal; 
 varying vec4            	var_TexLight; 
@@ -17,6 +17,10 @@ uniform vec4 				u_lightProjectionS;
 uniform vec4 				u_lightProjectionT;  
 uniform vec4 				u_lightProjectionQ;  
 uniform vec4 				u_lightFalloff;  
+uniform vec4 				u_bumpMatrixS;   
+uniform vec4 				u_bumpMatrixT;   
+uniform vec4 				u_diffuseMatrixS;   
+uniform vec4 				u_diffuseMatrixT;   
 uniform vec4 				u_colorModulate;  
 uniform vec4				u_colorAdd;  
       
@@ -27,11 +31,13 @@ void main( void ) {
 	// transform position into world space  
 	var_Position = ( u_modelMatrix * gl_Vertex ).xyz; 
  
-	// diffuse map texgen      
-	var_TexDiffuse.xy = ( gl_TextureMatrix[0] * attr_TexCoord ).st;  
- 
-	// normal map texgen  
-	var_TexNormal.xy = ( gl_TextureMatrix[2] * attr_TexCoord ).st;  
+	// normal map texgen   
+	var_TexNormal.x = dot( u_bumpMatrixS, attr_TexCoord );
+	var_TexNormal.y = dot( u_bumpMatrixT, attr_TexCoord ); 
+
+	// diffuse map texgen   
+	var_TexDiffuse.x = dot( u_diffuseMatrixS, attr_TexCoord );
+	var_TexDiffuse.y = dot( u_diffuseMatrixT, attr_TexCoord );
  
 	// light projection texgen 
 	var_TexLight.x = dot( u_lightProjectionS, gl_Vertex ); 
@@ -40,8 +46,8 @@ void main( void ) {
 	var_TexLight.w = dot( u_lightProjectionQ, gl_Vertex ); 
  
 	// construct tangent-binormal-normal 3x3 matrix    
-	var_TangentBinormalNormalMatrix = mat3( attr_Tangent, attr_Binormal, attr_Normal ); 
+	var_TangentBinormalNormalMatrix = mat3( attr_Tangent, attr_Binormal, gl_Normal ); 
  
 	// primary color  
-	var_Color = gl_Color * u_colorModulate + u_colorAdd;  
+	var_Color = gl_FrontColor * u_colorModulate + u_colorAdd;  
 }

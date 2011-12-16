@@ -1359,6 +1359,13 @@ typedef struct shaderProgram_s
 	GLint			lightProjectionQ;
 	GLint			lightFalloff;
 
+	GLint			bumpMatrixS;
+	GLint			bumpMatrixT;
+	GLint			diffuseMatrixS;
+	GLint			diffuseMatrixT;
+	GLint			specularMatrixS;
+	GLint			specularMatrixT;
+
 	GLint			colorModulate;
 	GLint			colorAdd;
 

@@ -5,12 +5,12 @@ varying vec2            	var_TexDiffuse;
 varying vec2            	var_TexNormal;      
 varying vec2            	var_TexSpecular;      
 varying vec4            	var_TexLight; 
-varying mat3				var_TangentBinormalNormalMatrix; 
+varying mat3				var_TangentBitangentNormalMatrix; 
 varying vec4            	var_Color;      
 
 attribute vec4          	attr_TexCoord;   
 attribute vec3          	attr_Tangent;   
-attribute vec3          	attr_Binormal;   
+attribute vec3          	attr_Bitangent;   
 attribute vec3          	attr_Normal;   
 
 uniform mat4				u_modelMatrix;   
@@ -18,34 +18,43 @@ uniform vec4 				u_lightProjectionS;
 uniform vec4 				u_lightProjectionT;   
 uniform vec4 				u_lightFalloff;   
 uniform vec4 				u_lightProjectionQ;   
+uniform vec4 				u_bumpMatrixS;   
+uniform vec4 				u_bumpMatrixT;   
+uniform vec4 				u_diffuseMatrixS;   
+uniform vec4 				u_diffuseMatrixT;   
+uniform vec4 				u_specularMatrixS;   
+uniform vec4 				u_specularMatrixT;   
 uniform vec4 				u_colorModulate;   
 uniform vec4				u_colorAdd;   
    
 void main( void ) {          
     // transform vertex position into homogenous clip-space   
-	gl_Position = ftransform( );  
+	gl_Position = ftransform();  
   
 	// transform vertex position into world space   
 	var_Position = normalize( u_modelMatrix * gl_Vertex ).xyz; 
 
+	// normal map texgen   
+	var_TexNormal.x = dot( u_bumpMatrixS, attr_TexCoord );
+	var_TexNormal.y = dot( u_bumpMatrixT, attr_TexCoord ); 
+
 	// diffuse map texgen   
-	var_TexDiffuse.xy = ( gl_TextureMatrix[0] * attr_TexCoord ).st;    
+	var_TexDiffuse.x = dot( u_diffuseMatrixS, attr_TexCoord );
+	var_TexDiffuse.y = dot( u_diffuseMatrixT, attr_TexCoord );
    
 	// specular map texgen   
-	var_TexSpecular.xy = ( gl_TextureMatrix[1] * attr_TexCoord ).st;    
+	var_TexSpecular.x = dot( u_specularMatrixS, attr_TexCoord );
+	var_TexSpecular.y = dot( u_specularMatrixT, attr_TexCoord );
 
-	// normal map texgen   
-	var_TexNormal.xy = ( gl_TextureMatrix[2] * attr_TexCoord ).st;    
-
-	// light texgen  
+	// light texgen
 	var_TexLight.x = dot( u_lightProjectionS, gl_Vertex );   
 	var_TexLight.y = dot( u_lightProjectionT, gl_Vertex );   
 	var_TexLight.z = dot( u_lightFalloff, gl_Vertex );   
 	var_TexLight.w = dot( u_lightProjectionQ, gl_Vertex );   
  
-	// construct tangent-binormal-normal 3x3 matrix   
-	var_TangentBinormalNormalMatrix = mat3( attr_Tangent, attr_Binormal, attr_Normal );     
+	// construct tangent-bitangent-normal 3x3 matrix   
+	var_TangentBitangentNormalMatrix = mat3( attr_Tangent, attr_Bitangent, gl_Normal );     
  
 	// primary color   
-	var_Color = gl_Color * u_colorModulate + u_colorAdd;   
+	var_Color = gl_FrontColor * u_colorModulate + u_colorAdd;   
 }

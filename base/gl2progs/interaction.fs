@@ -5,7 +5,7 @@ varying vec2            	var_TexDiffuse;
 varying vec2            	var_TexNormal;     
 varying vec2            	var_TexSpecular;    
 varying vec4            	var_TexLight; 
-varying mat3				var_TangentBinormalNormalMatrix; 
+varying mat3				var_TangentBitangentNormalMatrix; 
 varying vec4            	var_Color;
  
 uniform sampler2D   	    u_normalTexture;      
@@ -19,7 +19,7 @@ uniform vec4 				u_viewOrigin;
 uniform vec4 				u_diffuseColor;     
 uniform vec4 				u_specularColor;     
  
- vec4 lightingModel( vec4 diffuseTerm, vec3 specularTerm, vec3 L, vec3 N, vec3 H ) {   
+vec4 lightingModel( vec4 diffuseTerm, vec3 specularTerm, vec3 L, vec3 N, vec3 H ) {   
 #if 0
 	// half-lambertian blinn-phong lighting model    
 	float NdotL = max( ( dot( N, L ) + 0.5 ) / ( 1.0 + 0.5 ), 0.0 ); 
@@ -32,7 +32,7 @@ uniform vec4 				u_specularColor;
 	if (NdotL <= 0) 
 		specularLighting = vec3(0.0);
  
-	return diffuseLighting + vec4( specularLighting.rgb, 1.0 );       
+	return diffuseLighting + vec4( specularLighting.rgb, 1.0 );  
 #else 
 	// traditional lambertian blinn-phong lighting model
 	float NdotL = clamp( dot( N, L ), 0.0, 1.0 );  
@@ -47,16 +47,12 @@ void main( void ) {
 	vec3 L = normalize( u_lightOrigin.xyz - var_Position ); 
 	vec3 V = normalize( u_viewOrigin.xyz - var_Position ); 
 	vec3 H = normalize( L + V ); 
-
-	// rotate L and H into tangent space   
-	L = var_TangentBinormalNormalMatrix * L;   
-	H = var_TangentBinormalNormalMatrix * H;  	 
  
-	// compute normal from normal map, move from [0,1] to  [-1, 1] range, normalize 
+	// compute normal from normal map, move from [0, 1] to [-1, 1] range, normalize 
 	// NOTE: this is agb due to the RXGB compression technique used 
-	vec3 N = normalize( 2.0 * texture2D ( u_normalTexture, var_TexNormal.st ).agb - 1.0 ); 
-	N = var_TangentBinormalNormalMatrix * N; 
- 
+	vec3 N = normalize( ( 2.0 * texture2D ( u_normalTexture, var_TexNormal.st ).agb ) - 0.5 ); 
+	N = var_TangentBitangentNormalMatrix * N; 
+
 	// compute the diffuse term 
 	vec4 diffuse = texture2D( u_diffuseTexture, var_TexDiffuse );  
 	diffuse *= u_diffuseColor;  
