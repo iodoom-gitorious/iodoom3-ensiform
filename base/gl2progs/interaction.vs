@@ -53,7 +53,7 @@ void main( void ) {
 	var_TexLight.w = dot( u_lightProjectionQ, gl_Vertex );   
  
 	// construct tangent-bitangent-normal 3x3 matrix   
-	var_TangentBitangentNormalMatrix = mat3( attr_Tangent, attr_Bitangent, attr_Normal );     
+	var_TangentBitangentNormalMatrix = mat3( attr_Tangent, attr_Bitangent, gl_Normal );     
  
 	// primary color   
 	var_Color = gl_FrontColor * u_colorModulate + u_colorAdd;   
